@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Generator</title>
+    <script>
+        function generate_code(code_length) {
+            const CHARACTER_SET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'
+            let code = ''
+            for(let i = 0; i < code_length; i++) {
+                code += CHARACTER_SET[Math.floor(Math.random()*CHARACTER_SET.length)]
+            }
+            return code
+        }
+
+        function generate_codes(event) {
+            event.preventDefault();
+            const formdata = new FormData(event.target)
+            const data = Object.fromEntries(formdata.entries())
+            const num_codes = parseInt(data.num_codes)
+            const code_length = parseInt(data.code_length)
+            
+
+            if (isNaN(num_codes) || isNaN(code_length)){
+                alert("Please enter valid inputs")
+                return
+            }
+            let codes = []
+            while (codes.length < num_codes) {
+                let code = generate_code(code_length)
+                if (codes.includes(code)) continue
+                codes.push(code)
+            }
+            
+            let element = document.createElement('a');
+            let filename = "codes.csv"
+            element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent('ID\n' + codes.join('\n')));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+</head>
+<body>
+    <h1>
+        Code Generator
+    </h1>
+    <form onsubmit="generate_codes(event)">
+        <div>
+            <label for="num_codes">Number of Codes to Generate:</label>
+            <input type="number" name="num_codes">
+        </div>
+        <div>
+            <label for="code_length">Length of Codes:</label>
+            <input type="number" name="code_length">
+        </div>
+        <button type="submit">Download CSV File</button>
+    </form>
+</body>
+</html>
