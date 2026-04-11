@@ -97,6 +97,58 @@
             </div><br>
             <button type="submit" class="btn">Download CSV File</button>
         </form>
+
+        <hr>
+
+        <h2>QR Code Scanner</h2>
+        <div style="margin-bottom: 1rem;">
+            <video id="qr-video" style="width: 100%; max-width: 500px; border: 1px solid #ccc;"></video>
+        </div>
+        <div>
+            <b>Scanned Result:</b> <span id="cam-qr-result">None</span>
+        </div>
+        <div>
+            <button id="start-scan-btn" class="btn" style="margin-top: 10px; background-color: #4CAF50;">Start Scanning</button>
+            <button id="stop-scan-btn" class="btn" style="margin-top: 10px; background-color: #f44336; display: none;">Stop Scanning</button>
+        </div>
+
+        <script src="qr-scanner.umd.min.js"></script>
+        <script>
+            // Set the worker path explicitly since we loaded via script tag instead of ES module
+            QrScanner.WORKER_PATH = 'qr-scanner-worker.min.js';
+
+            const video = document.getElementById('qr-video');
+            const camQrResult = document.getElementById('cam-qr-result');
+            const startScanBtn = document.getElementById('start-scan-btn');
+            const stopScanBtn = document.getElementById('stop-scan-btn');
+
+            const qrScanner = new QrScanner(
+                video,
+                result => {
+                    camQrResult.textContent = result.data || result;
+                    camQrResult.style.color = 'green';
+                },
+                { returnDetailedScanResult: true, highlightScanRegion: true, highlightCodeOutline: true }
+            );
+
+            startScanBtn.addEventListener('click', () => {
+                qrScanner.start().then(() => {
+                    startScanBtn.style.display = 'none';
+                    stopScanBtn.style.display = 'inline-block';
+                    camQrResult.textContent = 'Scanning...';
+                    camQrResult.style.color = 'gray';
+                }).catch(err => {
+                    camQrResult.textContent = 'Error: ' + err;
+                    camQrResult.style.color = 'red';
+                });
+            });
+
+            stopScanBtn.addEventListener('click', () => {
+                qrScanner.stop();
+                startScanBtn.style.display = 'inline-block';
+                stopScanBtn.style.display = 'none';
+            });
+        </script>
     </body>
 
 </html>
