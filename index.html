@@ -147,18 +147,24 @@
                 video,
                 result => {
                     const text = result.data || result;
-                    camQrResult.textContent = text;
-                    camQrResult.style.color = 'green';
                     
                     const gridContainer = document.getElementById('grid-container');
                     
                     try {
                         const parsed = JSON.parse(text);
                         if (parsed.indices && parsed.firstTeam) {
+                            camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
+                            camQrResult.style.color = parsed.firstTeam.toLowerCase() === 'red' ? '#f44336' : (parsed.firstTeam.toLowerCase() === 'blue' ? '#2196F3' : 'green');
                             gridContainer.style.display = 'grid';
                             renderGrid(parsed.indices, parsed.firstTeam);
+                        } else {
+                            camQrResult.textContent = text;
+                            camQrResult.style.color = 'green';
+                            gridContainer.style.display = 'none';
                         }
                     } catch (e) {
+                         camQrResult.textContent = text;
+                         camQrResult.style.color = 'green';
                          gridContainer.style.display = 'none';
                     }
                 },
