@@ -172,6 +172,8 @@
 
                 stopScanBtn.addEventListener('click', () => {
                     qrScanner.stop();
+                    camQrResult.textContent = 'None'
+                    camQrResult.style.color = 'black'
                     startScanBtn.style.display = 'inline-block';
                     stopScanBtn.style.display = 'none';
                 });
