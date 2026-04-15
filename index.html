@@ -99,82 +99,82 @@
                 const startScanBtn = document.getElementById('start-scan-btn');
                 const stopScanBtn = document.getElementById('stop-scan-btn');
 
-            const qrScanner = new QrScanner(
-                video,
-                result => {
-                    const text = result.data || result;
-                    
-                    const gridContainer = document.getElementById('grid-container');
-                    
-                    try {
-                        const parsed = JSON.parse(text);
-                        if (parsed.indices && parsed.firstTeam) {
-                            camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
-                            camQrResult.style.color = parsed.firstTeam.toLowerCase() === 'red' ? '#f44336' : (parsed.firstTeam.toLowerCase() === 'blue' ? '#2196F3' : 'green');
-                            gridContainer.style.display = 'grid';
-                            renderGrid(parsed.indices, parsed.firstTeam);
-                            
-                            // Stop scanning on valid game board QR
-                            qrScanner.stop();
-                            // Reset UI buttons
-                            document.getElementById('start-scan-btn').style.display = 'inline-block';
-                            document.getElementById('stop-scan-btn').style.display = 'none';
-                        } else {
+                const qrScanner = new QrScanner(
+                    video,
+                    result => {
+                        const text = result.data || result;
+                        
+                        const gridContainer = document.getElementById('grid-container');
+                        
+                        try {
+                            const parsed = JSON.parse(text);
+                            if (parsed.indices && parsed.firstTeam) {
+                                camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
+                                camQrResult.style.color = parsed.firstTeam.toLowerCase() === 'red' ? '#f44336' : (parsed.firstTeam.toLowerCase() === 'blue' ? '#2196F3' : 'green');
+                                gridContainer.style.display = 'grid';
+                                renderGrid(parsed.indices, parsed.firstTeam);
+                                
+                                // Stop scanning on valid game board QR
+                                qrScanner.stop();
+                                // Reset UI buttons
+                                document.getElementById('start-scan-btn').style.display = 'inline-block';
+                                document.getElementById('stop-scan-btn').style.display = 'none';
+                            } else {
+                                camQrResult.textContent = text;
+                                camQrResult.style.color = 'green';
+                                gridContainer.style.display = 'none';
+                            }
+                        } catch (e) {
                             camQrResult.textContent = text;
                             camQrResult.style.color = 'green';
                             gridContainer.style.display = 'none';
                         }
-                    } catch (e) {
-                         camQrResult.textContent = text;
-                         camQrResult.style.color = 'green';
-                         gridContainer.style.display = 'none';
-                    }
-                },
-                { returnDetailedScanResult: true, highlightScanRegion: true, highlightCodeOutline: true }
-            );
+                    },
+                    { returnDetailedScanResult: true, highlightScanRegion: true, highlightCodeOutline: true }
+                );
 
-            function renderGrid(indices, firstTeam) {
-                const gridContainer = document.getElementById('grid-container');
-                gridContainer.innerHTML = '';
-                
-                const isRedFirst = firstTeam === 'Red';
-                const redIndices = isRedFirst ? indices.slice(0, 9) : indices.slice(9, 17);
-                const blueIndices = isRedFirst ? indices.slice(9, 17) : indices.slice(0, 9);
-                const assassin = indices[17]; // The 18th index is the assassin
-                
-                for (let i = 0; i < 25; i++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('grid-cell');
-                    if (redIndices.includes(i)) {
-                        cell.classList.add('cell-red');
-                    } else if (blueIndices.includes(i)) {
-                        cell.classList.add('cell-blue');
-                    } else if (i === assassin) {
-                        cell.classList.add('cell-black');
-                    } else {
-                        cell.classList.add('cell-neutral');
+                function renderGrid(indices, firstTeam) {
+                    const gridContainer = document.getElementById('grid-container');
+                    gridContainer.innerHTML = '';
+                    
+                    const isRedFirst = firstTeam === 'Red';
+                    const redIndices = isRedFirst ? indices.slice(0, 9) : indices.slice(9, 17);
+                    const blueIndices = isRedFirst ? indices.slice(9, 17) : indices.slice(0, 9);
+                    const assassin = indices[17]; // The 18th index is the assassin
+                    
+                    for (let i = 0; i < 25; i++) {
+                        const cell = document.createElement('div');
+                        cell.classList.add('grid-cell');
+                        if (redIndices.includes(i)) {
+                            cell.classList.add('cell-red');
+                        } else if (blueIndices.includes(i)) {
+                            cell.classList.add('cell-blue');
+                        } else if (i === assassin) {
+                            cell.classList.add('cell-black');
+                        } else {
+                            cell.classList.add('cell-neutral');
+                        }
+                        gridContainer.appendChild(cell);
                     }
-                    gridContainer.appendChild(cell);
                 }
-            }
 
-            startScanBtn.addEventListener('click', () => {
-                qrScanner.start().then(() => {
-                    startScanBtn.style.display = 'none';
-                    stopScanBtn.style.display = 'inline-block';
-                    camQrResult.textContent = 'Scanning...';
-                    camQrResult.style.color = 'gray';
-                }).catch(err => {
-                    camQrResult.textContent = 'Error: ' + err;
-                    camQrResult.style.color = 'red';
+                startScanBtn.addEventListener('click', () => {
+                    qrScanner.start().then(() => {
+                        startScanBtn.style.display = 'none';
+                        stopScanBtn.style.display = 'inline-block';
+                        camQrResult.textContent = 'Scanning...';
+                        camQrResult.style.color = 'gray';
+                    }).catch(err => {
+                        camQrResult.textContent = 'Error: ' + err;
+                        camQrResult.style.color = 'red';
+                    });
                 });
-            });
 
-            stopScanBtn.addEventListener('click', () => {
-                
-                startScanBtn.style.display = 'inline-block';
-                stopScanBtn.style.display = 'none';
-            });
+                stopScanBtn.addEventListener('click', () => {
+                    
+                    startScanBtn.style.display = 'inline-block';
+                    stopScanBtn.style.display = 'none';
+                });
             });
         </script>
     </head>
