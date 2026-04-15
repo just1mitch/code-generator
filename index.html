@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Code Generator</title>
-        <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
         <style>
             body {
                 font-family: 'Lato', sans-serif;
@@ -93,10 +93,11 @@
         </style>
         <script src="qr-scanner.umd.min.js"></script>
         <script>
-            const video = document.getElementById('qr-video');
-            const camQrResult = document.getElementById('cam-qr-result');
-            const startScanBtn = document.getElementById('start-scan-btn');
-            const stopScanBtn = document.getElementById('stop-scan-btn');
+            document.addEventListener('DOMContentLoaded', () => {
+                const video = document.getElementById('qr-video');
+                const camQrResult = document.getElementById('cam-qr-result');
+                const startScanBtn = document.getElementById('start-scan-btn');
+                const stopScanBtn = document.getElementById('stop-scan-btn');
 
             const qrScanner = new QrScanner(
                 video,
@@ -173,6 +174,7 @@
                 
                 startScanBtn.style.display = 'inline-block';
                 stopScanBtn.style.display = 'none';
+            });
             });
         </script>
     </head>
