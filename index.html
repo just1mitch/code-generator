@@ -99,36 +99,51 @@
                 const startScanBtn = document.getElementById('start-scan-btn');
                 const stopScanBtn = document.getElementById('stop-scan-btn');
 
+                // Load and display grid from URL on page load
+                const loadGridFromURL = () => {
+                    const params = new URLSearchParams(window.location.search);
+                    const encodedAnswer = params.get('answer');
+                    
+                    if (encodedAnswer) {
+                        const decodedAnswer = atob(encodedAnswer);
+                        const parsed = JSON.parse(decodedAnswer);
+                        
+                        camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
+                        camQrResult.style.color = parsed.firstTeam.toLowerCase() === 'red' ? '#f44336' : (parsed.firstTeam.toLowerCase() === 'blue' ? '#2196F3' : 'green');
+                        document.getElementById('grid-container').style.display = 'grid';
+                        renderGrid(parsed.indices, parsed.firstTeam);
+                    }
+                };
+
+                const processQRCode = (text) => {
+                    const gridContainer = document.getElementById('grid-container');
+                    
+                    // Parse the URL and extract the base64-encoded answer parameter
+                    const url = new URL(text);
+                    const encodedAnswer = url.searchParams.get('answer');
+                    
+                    if (encodedAnswer) {
+                        // Update the current page URL with the new answer parameter
+                        const currentUrl = new URL(window.location);
+                        currentUrl.searchParams.set('answer', encodedAnswer);
+                        window.history.pushState({}, '', currentUrl);
+                        
+                        // Decode and display the grid
+                        const decodedAnswer = atob(encodedAnswer);
+                        const parsed = JSON.parse(decodedAnswer);
+                        
+                        camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
+                        camQrResult.style.color = parsed.firstTeam.toLowerCase() === 'red' ? '#f44336' : (parsed.firstTeam.toLowerCase() === 'blue' ? '#2196F3' : 'green');
+                        gridContainer.style.display = 'grid';
+                        renderGrid(parsed.indices, parsed.firstTeam);
+                    }
+                };
+
                 const qrScanner = new QrScanner(
                     video,
                     result => {
                         const text = result.data || result;
-                        
-                        const gridContainer = document.getElementById('grid-container');
-                        
-                        try {
-                            const parsed = JSON.parse(text);
-                            if (parsed.indices && parsed.firstTeam) {
-                                camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
-                                camQrResult.style.color = parsed.firstTeam.toLowerCase() === 'red' ? '#f44336' : (parsed.firstTeam.toLowerCase() === 'blue' ? '#2196F3' : 'green');
-                                gridContainer.style.display = 'grid';
-                                renderGrid(parsed.indices, parsed.firstTeam);
-                                
-                                // Stop scanning on valid game board QR
-                                qrScanner.stop();
-                                // Reset UI buttons
-                                document.getElementById('start-scan-btn').style.display = 'inline-block';
-                                document.getElementById('stop-scan-btn').style.display = 'none';
-                            } else {
-                                camQrResult.textContent = text;
-                                camQrResult.style.color = 'green';
-                                gridContainer.style.display = 'none';
-                            }
-                        } catch (e) {
-                            camQrResult.textContent = text;
-                            camQrResult.style.color = 'green';
-                            gridContainer.style.display = 'none';
-                        }
+                        processQRCode(text);
                     },
                     { returnDetailedScanResult: true, highlightScanRegion: true, highlightCodeOutline: true }
                 );
@@ -172,11 +187,14 @@
 
                 stopScanBtn.addEventListener('click', () => {
                     qrScanner.stop();
-                    camQrResult.textContent = 'None'
+                    camQrResult.textContent = 'Scanning stopped'
                     camQrResult.style.color = 'black'
                     startScanBtn.style.display = 'inline-block';
                     stopScanBtn.style.display = 'none';
                 });
+
+                // Load grid on page load
+                loadGridFromURL();
             });
         </script>
     </head>
