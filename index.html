@@ -105,7 +105,11 @@
                     const encodedAnswer = params.get('answer');
                     
                     if (encodedAnswer) {
-                        const decodedAnswer = atob(encodedAnswer);
+                        const decodedAnswer = atob(encodedAnswer
+                                                    .replace(/-/g, '+')
+                                                    .replace(/_/g, '/')
+                                                    + '=='.slice(0, (4 - encodedAnswer.length % 4) % 4)
+                                                );
                         const parsed = JSON.parse(decodedAnswer);
                         
                         camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
@@ -129,7 +133,11 @@
                         window.history.pushState({}, '', currentUrl);
                         
                         // Decode and display the grid
-                        const decodedAnswer = atob(encodedAnswer);
+                        const decodedAnswer = atob(encodedAnswer
+                                                    .replace(/-/g, '+')
+                                                    .replace(/_/g, '/')
+                                                    + '=='.slice(0, (4 - encodedAnswer.length % 4) % 4)
+                                                );
                         const parsed = JSON.parse(decodedAnswer);
                         
                         camQrResult.textContent = 'First Team: ' + parsed.firstTeam;
