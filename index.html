@@ -136,6 +136,11 @@
                         camQrResult.style.color = parsed.firstTeam.toLowerCase() === 'red' ? '#f44336' : (parsed.firstTeam.toLowerCase() === 'blue' ? '#2196F3' : 'green');
                         gridContainer.style.display = 'grid';
                         renderGrid(parsed.indices, parsed.firstTeam);
+                        
+                        // Stop scanning and reset UI buttons
+                        qrScanner.stop();
+                        startScanBtn.style.display = 'inline-block';
+                        stopScanBtn.style.display = 'none';
                     }
                 };
 
